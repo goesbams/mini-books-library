@@ -1,0 +1,35 @@
+version : '3.9'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: mini-books-library-db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: books_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - mini-books-library-net
+
+  # swagger-ui:
+  #   image: swaggerapi/swagger-ui
+  #   container_name: swagger-ui
+  #   ports:
+  #     - "8081:8080"
+  #   environment:
+  #     - SWAGGER_JSON=http://backend:8090/swagger/doc.json
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - mini-books-library-net
+    
+networks:
+  mini-books-library-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
