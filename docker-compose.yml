@@ -1,5 +1,3 @@
-version : '3.9'
-
 services:
   postgres:
     image: postgres:15
@@ -15,13 +13,43 @@ services:
     networks:
       - mini-books-library-net
 
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: mini-books-library-backend
+    ports:
+      - "9000:9000"
+    environment:
+      DATABASE_USER: user
+      DATABASE_PASSWORD: password
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: books_db
+      DATABASE_SSLMODE: disable
+    depends_on:
+      - postgres
+    networks:
+      - mini-books-library-net
+
+  # migrate:
+  #   build:
+  #     context: .
+  #     dockerfile: backend/Dockerfile
+  #   container_name: mini-books-library-migrate
+  #   command: /app/backend migrate
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - mini-books-library-net
+
   # swagger-ui:
   #   image: swaggerapi/swagger-ui
   #   container_name: swagger-ui
   #   ports:
   #     - "8081:8080"
   #   environment:
-  #     - SWAGGER_JSON=http://backend:8090/swagger/doc.json
+  #     - SWAGGER_JSON=http://backend:9000/swagger/doc.json  
   #   depends_on:
   #     - backend
   #   networks:

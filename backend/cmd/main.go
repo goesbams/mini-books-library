@@ -6,7 +6,6 @@ import (
 
 	"github.com/goesbams/mini-books-library/backend/config"
 	"github.com/goesbams/mini-books-library/backend/database"
-	"github.com/goesbams/mini-books-library/backend/migrations"
 )
 
 func main() {
@@ -20,12 +19,6 @@ func main() {
 	db, err := database.ConnectDB(cfg)
 	if err != nil {
 		log.Fatal("failed to connect the database:", err)
-	}
-
-	// run migrations
-	err = migrations.RunMigrations(cfg)
-	if err != nil {
-		log.Fatal("failed to run migrations:", err)
 	}
 
 	fmt.Println(db)
