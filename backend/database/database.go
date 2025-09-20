@@ -9,13 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func ConnectDB() (*pgx.Conn, error) {
-	cfg, err := config.LoadConfig("config/config.dev.yaml")
-	if err != nil {
-		log.Fatal("error loading config:", err)
-		return nil, err
-	}
-
+func ConnectDB(cfg *config.Config) (*pgx.Conn, error) {
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
 		cfg.Database.User,
 		cfg.Database.Password,
