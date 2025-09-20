@@ -1,7 +1,18 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+
+	"github.com/goesbams/mini-books-library/backend/database"
+)
 
 func main() {
-	fmt.Println("project initiation")
+	// initialize database connection
+	db, err := database.ConnectDB()
+	if err != nil {
+		log.Fatal("failed to connect the database:", err)
+	}
+
+	fmt.Println(db)
 }
