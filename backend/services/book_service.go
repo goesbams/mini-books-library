@@ -25,8 +25,5 @@ func (s *BookServiceSqlx) GetBooks() ([]entities.Book, error) {
 		return nil, err
 	}
 
-	if len(books) == 0 {
-		return []entities.Book{}, nil
-	}
 	return books, nil
 }

@@ -27,7 +27,10 @@ func NewHandler(service services.BookService) *Handler {
 func (h *Handler) GetBooks(c echo.Context) error {
 	books, err := h.service.GetBooks()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, books)
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error":   "internal server server",
+			"message": "unable to fetch books",
+		})
 	}
 
 	return c.JSON(http.StatusOK, books)
