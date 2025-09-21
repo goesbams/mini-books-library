@@ -5,6 +5,7 @@ import (
 
 	"github.com/goesbams/mini-books-library/backend/services"
 	"github.com/labstack/echo/v4"
+	"github.com/sirupsen/logrus"
 )
 
 type Handler struct {
@@ -27,11 +28,13 @@ func NewHandler(service services.BookService) *Handler {
 func (h *Handler) GetBooks(c echo.Context) error {
 	books, err := h.service.GetBooks()
 	if err != nil {
+		logrus.WithError(err).Error("failed to fetch books")
 		return c.JSON(http.StatusInternalServerError, map[string]string{
 			"error":   "internal server server",
 			"message": "unable to fetch books",
 		})
 	}
 
+	logrus.Info("fetched books successfully")
 	return c.JSON(http.StatusOK, books)
 }

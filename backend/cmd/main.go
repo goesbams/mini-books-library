@@ -1,11 +1,10 @@
 package main
 
 import (
-	"log"
-
 	"github.com/goesbams/mini-books-library/backend/config"
 	"github.com/goesbams/mini-books-library/backend/database"
 	_ "github.com/goesbams/mini-books-library/backend/docs"
+	"github.com/sirupsen/logrus"
 	echoSwagger "github.com/swaggo/echo-swagger"
 
 	"github.com/goesbams/mini-books-library/backend/handlers"
@@ -21,16 +20,22 @@ import (
 // @contact.email bambang.handoko12@gmail.com
 
 func main() {
+	// initialize logger
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+	})
+
 	// load configuration
 	cfg, err := config.LoadConfig("config/config.dev.yaml")
 	if err != nil {
-		log.Fatal("error loading config:", err)
+		logger.Fatal("error loading config:", err)
 	}
 
 	// initialize database connection
 	conn, err := database.ConnectDB(cfg)
 	if err != nil {
-		log.Fatal("failed to connect the database:", err)
+		logger.Fatal("failed to connect the database:", err)
 	}
 
 	// setup repos & services
