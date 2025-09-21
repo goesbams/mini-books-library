@@ -4,7 +4,7 @@ import (
 	"github.com/goesbams/mini-books-library/backend/config"
 	"github.com/goesbams/mini-books-library/backend/database"
 	_ "github.com/goesbams/mini-books-library/backend/docs"
-	"github.com/sirupsen/logrus"
+	"github.com/goesbams/mini-books-library/backend/utils"
 	echoSwagger "github.com/swaggo/echo-swagger"
 
 	"github.com/goesbams/mini-books-library/backend/handlers"
@@ -21,10 +21,7 @@ import (
 
 func main() {
 	// initialize logger
-	logger := logrus.New()
-	logger.SetFormatter(&logrus.TextFormatter{
-		FullTimestamp: true,
-	})
+	logger := utils.InitializeLogger()
 
 	// load configuration
 	cfg, err := config.LoadConfig("config/config.dev.yaml")
