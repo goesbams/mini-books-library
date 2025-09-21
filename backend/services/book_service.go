@@ -1,6 +1,8 @@
 package services
 
 import (
+	"fmt"
+
 	"github.com/goesbams/mini-books-library/backend/entities"
 	"github.com/goesbams/mini-books-library/backend/repositories"
 	"github.com/jmoiron/sqlx"
@@ -26,4 +28,12 @@ func (s *BookServiceSqlx) GetBooks() ([]entities.Book, error) {
 	}
 
 	return books, nil
+}
+
+func (s *BookServiceSqlx) AddBook(book *entities.Book) error {
+	if err := book.Validate(); err != nil {
+		return fmt.Errorf("validation failed: %w", err)
+	}
+
+	return s.repo.AddBook(s.db, book)
 }
