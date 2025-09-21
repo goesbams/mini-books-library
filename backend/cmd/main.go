@@ -45,6 +45,7 @@ func main() {
 
 	// Routes
 	e.GET("/books", handler.GetBooks)
+	e.POST("books", handler.AddBook)
 
 	// Swagger UI route
 	e.GET("/swagger/*", echoSwagger.EchoWrapHandler())

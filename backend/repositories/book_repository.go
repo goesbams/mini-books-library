@@ -20,7 +20,7 @@ func NewBookRepository() BookRepository {
 
 func (r *BookRepositorySqlx) GetBooks(db *sqlx.DB) ([]entities.Book, error) {
 	var books []entities.Book
-	err := db.Select(&books, "SELECT id, title, author, cover_image_url, publication_date FROM books")
+	err := db.Select(&books, "SELECT id, title, author, cover_image_url, description, publication_date, Isbn, number_of_pages FROM books")
 	if err != nil {
 		return nil, fmt.Errorf("database error: %w", err)
 	}

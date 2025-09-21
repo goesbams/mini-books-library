@@ -2,10 +2,13 @@ definitions:
   entities.Book:
     properties:
       author:
+        maxLength: 255
+        minLength: 2
         type: string
       cover_image_url:
         type: string
       description:
+        maxLength: 1000
         type: string
       id:
         type: integer
@@ -16,7 +19,15 @@ definitions:
       publication_date:
         type: string
       title:
+        maxLength: 255
+        minLength: 2
         type: string
+    required:
+    - author
+    - isbn
+    - number_of_pages
+    - publication_date
+    - title
     type: object
 info:
   contact:
@@ -46,6 +57,59 @@ paths:
             additionalProperties: true
             type: object
       summary: Get all books
+      tags:
+      - books
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Add a new book to the library
+      parameters:
+      - description: Book Title
+        in: formData
+        name: title
+        required: true
+        type: string
+      - description: Book Author
+        in: formData
+        name: author
+        required: true
+        type: string
+      - description: Cover Image URL
+        in: formData
+        name: cover_image_url
+        type: string
+      - description: Description
+        in: formData
+        name: description
+        type: string
+      - description: Publication Date (YYYY-MM-DD)
+        in: formData
+        name: publication_date
+        required: true
+        type: string
+      - description: Number of Pages
+        in: formData
+        name: number_of_pages
+        required: true
+        type: integer
+      - description: ISBN (13 digits)
+        in: formData
+        name: isbn
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.Book'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Add a new book
       tags:
       - books
 swagger: "2.0"
