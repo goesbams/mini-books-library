@@ -10,6 +10,7 @@ import (
 type BookRepository interface {
 	GetBooks(db *sqlx.DB) ([]entities.Book, error)
 	AddBook(db *sqlx.DB, book *entities.Book) error
+	GetBookById(db *sqlx.DB, id string) (entities.Book, error)
 }
 
 type BookRepositorySqlx struct{}
@@ -39,8 +40,22 @@ func (r *BookRepositorySqlx) AddBook(db *sqlx.DB, book *entities.Book) error {
     ) VALUES (:title, :author, :cover_image_url, :description, :publication_date, :number_of_pages, :isbn)
 		`, book)
 	if err != nil {
-		return fmt.Errorf("failed to add book: %w", err)
+		return fmt.Errorf("database error: %w", err)
 	}
 
 	return nil
+}
+
+func (r *BookRepositorySqlx) GetBookById(db *sqlx.DB, id string) (entities.Book, error) {
+	var book entities.Book
+	err := db.Get(&book, `
+		SELECT id, title, author, cover_image_url, description, publication_date, number_of_pages, isbn
+		FROM books
+		WHERE id = $1
+	`, id)
+	if err != nil {
+		return entities.Book{}, fmt.Errorf("database error: %w", err)
+	}
+
+	return book, nil
 }

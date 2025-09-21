@@ -10,6 +10,7 @@ import (
 type BookService interface {
 	GetBooks() ([]entities.Book, error)
 	AddBook(*entities.Book) error
+	GetBookById(id string) (entities.Book, error)
 }
 
 type BookServiceSqlx struct {
@@ -36,4 +37,8 @@ func (s *BookServiceSqlx) AddBook(book *entities.Book) error {
 	}
 
 	return s.repo.AddBook(s.db, book)
+}
+
+func (s *BookServiceSqlx) GetBookById(id string) (entities.Book, error) {
+	return s.repo.GetBookById(s.db, id)
 }

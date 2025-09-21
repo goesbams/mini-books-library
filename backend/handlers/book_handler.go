@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"database/sql"
+	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/goesbams/mini-books-library/backend/entities"
@@ -90,4 +93,39 @@ func (h *Handler) AddBook(c echo.Context) error {
 	return c.JSON(http.StatusCreated, map[string]interface{}{
 		"message": "book created successfully",
 	})
+}
+
+// GetBookByID retrieves a book by its ID
+// @Summary Get book by ID
+// @Description Get detailed information about a book by its ID
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param id path int true "Book ID"
+// @Success 200 {object} entities.Book
+// @Failure 404 {object} map[string]string "Book not found"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /books/{id} [get]
+func (h *Handler) GetBookById(c echo.Context) error {
+	id := c.Param("id")
+
+	book, err := h.service.GetBookById(id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			logrus.WithError(err).Warn(fmt.Sprintf("book with id:%s not found", id))
+			return c.JSON(http.StatusNotFound, map[string]string{
+				"error":   "not_found",
+				"message": "book not found",
+			})
+		}
+
+		logrus.WithError(err).Error(fmt.Sprintf("failed to fetch book by id: %s", id))
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error":   "internal_server_error",
+			"message": "something went wrong while fetching book",
+		})
+	}
+
+	logrus.Info(fmt.Sprintf("get book by id:%d title:%s successfully", book.ID, book.Title))
+	return c.JSON(http.StatusOK, book)
 }
