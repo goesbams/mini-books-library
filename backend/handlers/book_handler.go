@@ -15,6 +15,15 @@ func NewHandler(service services.BookService) *Handler {
 	return &Handler{service: service}
 }
 
+// GetBooks fetches all books
+// @Summary Get all books
+// @Description Retrieve a list of all books in the library
+// @Tags books
+// @Accept json
+// @Produce json
+// @Success 200 {array} entities.Book
+// @Failure 500 {object} map[string]interface{}
+// @Router /books [get]
 func (h *Handler) GetBooks(c echo.Context) error {
 	books, err := h.service.GetBooks()
 	if err != nil {

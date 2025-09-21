@@ -11,6 +11,12 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// @title Mini Books Library API
+// @version 1.0
+// @description This is a sample API for managing books in the library.
+// @contact.name Bambang Handoko (Ando)
+// @contact.email bambang.handoko12@gmail.com
+
 func main() {
 	// load configuration
 	cfg, err := config.LoadConfig("config/config.dev.yaml")
@@ -34,6 +40,9 @@ func main() {
 
 	// Routes
 	e.GET("/books", handler.GetBooks)
+
+	// Swagger UI route
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// start server
 	e.Logger.Fatal(e.Start(":9000"))

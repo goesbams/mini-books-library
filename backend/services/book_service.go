@@ -20,5 +20,13 @@ func NewBookService(repo repositories.BookRepository, db *sqlx.DB) BookService {
 }
 
 func (s *BookServiceSqlx) GetBooks() ([]entities.Book, error) {
-	return s.repo.GetBooks(s.db)
+	books, err := s.repo.GetBooks(s.db)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(books) == 0 {
+		return []entities.Book{}, nil
+	}
+	return books, nil
 }
