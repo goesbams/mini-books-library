@@ -1,27 +1,36 @@
-.PHONY: help migrate-up migrate-down docker-up-db docker-up-backend
+.PHONY: help migrate-up migrate-down docker-build docker-up docker-down start-up
+
+# default service value
+service ?= backend
 
 help:
+	@echo "------------------------------------------------------------------------------------------------------------"
 	@echo "Commands:"
-	@echo "------------------------------------"
-	@echo "  docker-up-db:      Compose up PostgreSQL database"
-	@echo "  docker-up-backend: Compose up backend service"
-	@echo "  migrate-up:        Apply migrations (add new table/columns)"
-	@echo "  migrate-down:      Revert migrations (remove table/columns)"
-	@echo "  docker-up:         Build all images"
-	@echo "  docker-down:       Compose down all services"
-	@echo "------------------------------------"
+	@echo "------------------------------------------------------------------------------------------------------------"
+	@echo -e "    migrate-up: \t\t Apply database migrations (e.g., add new tables/columns)"
+	@echo -e "    migrate-down: \t\t Revert database migrations (e.g., remove tables/columns)"
+	@echo -e "    docker-build <service>: \t Build the specified service (e.g., backend, postgres)"
+	@echo -e "    docker-up <service>: \t Start the specified service (e.g., backend, postgres) and its dependencies"
+	@echo -e "    docker-down: \t\t Stop and remove all running containers and networks"
+	@echo "------------------------------------------------------------------------------------------------------------"
 
+# migrate up from local to docker
 migrate-up:
+	@echo "Running migrations to update the database..."
 	migrate -path ./backend/migrations -database postgres://user:password@localhost:5432/books_db?sslmode=disable up
 
 migrate-down:
+	@echo "Reverting migrations to rollback the database..."
 	migrate -path ./backend/migrations -database postgres://user:password@localhost:5432/books_db?sslmode=disable down
 
-docker-up-db:
-	docker-compose up postgres
+docker-build:
+	@echo "Building the $(service) service image..."
+	docker-compose build --no-cache $(service)
 
-docker-up-backend:
-	docker-compose up backend
+docker-up:
+	@echo "Starting up the $(service) service..."
+	docker-compose up $(service)
 
 docker-down:
+	@echo "Stopping and removing all running containers and networks..."
 	docker-compose down
