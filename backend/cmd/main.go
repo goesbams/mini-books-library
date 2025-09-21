@@ -5,6 +5,9 @@ import (
 
 	"github.com/goesbams/mini-books-library/backend/config"
 	"github.com/goesbams/mini-books-library/backend/database"
+	_ "github.com/goesbams/mini-books-library/backend/docs"
+	echoSwagger "github.com/swaggo/echo-swagger"
+
 	"github.com/goesbams/mini-books-library/backend/handlers"
 	"github.com/goesbams/mini-books-library/backend/repositories"
 	"github.com/goesbams/mini-books-library/backend/services"
@@ -42,7 +45,7 @@ func main() {
 	e.GET("/books", handler.GetBooks)
 
 	// Swagger UI route
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	e.GET("/swagger/*", echoSwagger.EchoWrapHandler())
 
 	// start server
 	e.Logger.Fatal(e.Start(":9000"))
