@@ -1,11 +1,14 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/goesbams/mini-books-library/backend/config"
 	"github.com/goesbams/mini-books-library/backend/database"
+	"github.com/goesbams/mini-books-library/backend/handlers"
+	"github.com/goesbams/mini-books-library/backend/repositories"
+	"github.com/goesbams/mini-books-library/backend/services"
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
@@ -16,12 +19,22 @@ func main() {
 	}
 
 	// initialize database connection
-	db, err := database.ConnectDB(cfg)
+	conn, err := database.ConnectDB(cfg)
 	if err != nil {
 		log.Fatal("failed to connect the database:", err)
 	}
 
-	// setup handlers
+	// setup repos & services
+	bookRepo := repositories.NewBookRepository()
+	bookService := services.NewBookService(bookRepo, conn)
 
-	fmt.Println(db)
+	// setup handlers
+	e := echo.New()
+	handler := handlers.NewHandler(bookService)
+
+	// Routes
+	e.GET("/books", handler.GetBooks)
+
+	// start server
+	e.Logger.Fatal(e.Start(":9000"))
 }
