@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/go-chi/chi/middleware"
 	"github.com/goesbams/mini-books-library/backend/config"
 	"github.com/goesbams/mini-books-library/backend/database"
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
@@ -20,6 +22,13 @@ func main() {
 	if err != nil {
 		log.Fatal("failed to connect the database:", err)
 	}
+
+	// create echo instance
+	e := echo.New()
+
+	// Middleware
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
 	fmt.Println(db)
 }
