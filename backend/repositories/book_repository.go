@@ -7,10 +7,16 @@ import (
 
 type BookRepository interface {
 	GetBooks(db *sqlx.DB) ([]entities.Book, error)
-	AddBook(db *sqlx.DB, book *entities.Book) error
-	GetBookById(db *sqlx.DB, id int) (entities.Book, error)
-	UpdateBook(db *sqlx.DB, id int, book *entities.Book) error
-	DeleteBook(db *sqlx.DB, in int)
 }
 
 type BookRepositorySqlx struct{}
+
+func NewBookRepository() BookRepository {
+	return &BookRepositorySqlx{}
+}
+
+func (r *BookRepositorySqlx) GetBooks(db *sqlx.DB) ([]entities.Book, error) {
+	var books []entities.Book
+	err := db.Select(&books, "SELECT id, title, author, cover_image_url, publication_date FROM books")
+	return books, err
+}
