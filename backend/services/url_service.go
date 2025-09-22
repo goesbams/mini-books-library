@@ -12,7 +12,7 @@ type UrlServiceInterface interface {
 
 type UrlService struct{}
 
-func NewURLService() UrlServiceInterface {
+func NewUrlService() UrlServiceInterface {
 	return &UrlService{}
 }
 

@@ -29,6 +29,25 @@ definitions:
     - publication_date
     - title
     type: object
+  entities.URLRequest:
+    properties:
+      operation:
+        enum:
+        - canonical
+        - redirection
+        - all
+        type: string
+      url:
+        type: string
+    required:
+    - operation
+    - url
+    type: object
+  entities.URLResponse:
+    properties:
+      processed_url:
+        type: string
+    type: object
 info:
   contact:
     email: bambang.handoko12@gmail.com
@@ -239,4 +258,32 @@ paths:
       summary: Update a book by ID
       tags:
       - books
+  /urls/process:
+    post:
+      consumes:
+      - application/json
+      description: Clean or redirect a given URL based on operation type (canonical,
+        redirection, all)
+      parameters:
+      - description: URL and Operation
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/entities.URLRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.URLResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Process URL cleanup/redirection
+      tags:
+      - urls
 swagger: "2.0"

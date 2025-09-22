@@ -314,6 +314,47 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/urls/process": {
+            "post": {
+                "description": "Clean or redirect a given URL based on operation type (canonical, redirection, all)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "urls"
+                ],
+                "summary": "Process URL cleanup/redirection",
+                "parameters": [
+                    {
+                        "description": "URL and Operation",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entities.URLRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.URLResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -355,6 +396,34 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 2
+                }
+            }
+        },
+        "entities.URLRequest": {
+            "type": "object",
+            "required": [
+                "operation",
+                "url"
+            ],
+            "properties": {
+                "operation": {
+                    "type": "string",
+                    "enum": [
+                        "canonical",
+                        "redirection",
+                        "all"
+                    ]
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.URLResponse": {
+            "type": "object",
+            "properties": {
+                "processed_url": {
+                    "type": "string"
                 }
             }
         }

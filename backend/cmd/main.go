@@ -38,10 +38,12 @@ func main() {
 	// setup repos & services
 	bookRepo := repositories.NewBookRepository()
 	bookService := services.NewBookService(bookRepo, conn)
+	urlService := services.NewUrlService()
 
 	// setup book handlers
 	e := echo.New()
 	bookHandler := handlers.NewBookHandler(bookService)
+	urlHandler := handlers.NewUrlHandler(urlService)
 
 	// Routes
 	e.GET("/books", bookHandler.GetBooks)
@@ -49,6 +51,8 @@ func main() {
 	e.GET("books/:id", bookHandler.GetBookById)
 	e.PUT("books/:id", bookHandler.UpdateBook)
 	e.DELETE("books/:id", bookHandler.DeleteBook)
+
+	e.POST("/urls/process", urlHandler.ProcessUrl)
 
 	// Swagger UI route
 	e.GET("/swagger/*", echoSwagger.EchoWrapHandler())

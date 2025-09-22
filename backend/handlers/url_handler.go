@@ -30,7 +30,7 @@ func NewUrlHandler(service services.UrlServiceInterface) *UrlHandler {
 // @Success 200 {object} entities.URLResponse
 // @Failure 400 {object} map[string]interface{}
 // @Router /urls/process [post]
-func (h *UrlHandler) ProcessURL(c echo.Context) error {
+func (h *UrlHandler) ProcessUrl(c echo.Context) error {
 	var req entities.URLRequest
 	if err := c.Bind(&req); err != nil {
 		logrus.WithError(err).Error("failed to bind url request")
