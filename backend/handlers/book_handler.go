@@ -196,20 +196,29 @@ func (h *Handler) UpdateBook(c echo.Context) error {
 // @Tags books
 // @Accept json
 // @Produce json
+// @Param id path int true "Book ID"
 // @Success 204 {string} string "No Content"
 // @Failure 404 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
 // @Router /books/{id} [delete]
 func (h *Handler) DeleteBook(c echo.Context) error {
 	id := c.Param("id")
 
 	if err := h.service.DeleteBook(id); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return c.JSON(http.StatusNotFound, map[string]string{
+				"error":   "not_found",
+				"message": "book not found",
+			})
+		}
+
 		logrus.WithError(err).Error("failed to delete book")
-		return c.JSON(http.StatusNotFound, map[string]string{
-			"error":   "not found",
-			"message": "book not found",
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error":   "internal_server_error",
+			"message": "unable to delete book",
 		})
 	}
 
-	logrus.Info(fmt.Sprintf("deleted book id: %s successfully", id))
+	logrus.Infof("deleted book id: %s successfully", id)
 	return c.NoContent(http.StatusNoContent)
 }
