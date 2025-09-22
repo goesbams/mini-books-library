@@ -39,16 +39,16 @@ func main() {
 	bookRepo := repositories.NewBookRepository()
 	bookService := services.NewBookService(bookRepo, conn)
 
-	// setup handlers
+	// setup book handlers
 	e := echo.New()
-	handler := handlers.NewHandler(bookService)
+	bookHandler := handlers.NewBookHandler(bookService)
 
 	// Routes
-	e.GET("/books", handler.GetBooks)
-	e.POST("books", handler.AddBook)
-	e.GET("books/:id", handler.GetBookById)
-	e.PUT("books/:id", handler.UpdateBook)
-	e.DELETE("books/:id", handler.DeleteBook)
+	e.GET("/books", bookHandler.GetBooks)
+	e.POST("books", bookHandler.AddBook)
+	e.GET("books/:id", bookHandler.GetBookById)
+	e.PUT("books/:id", bookHandler.UpdateBook)
+	e.DELETE("books/:id", bookHandler.DeleteBook)
 
 	// Swagger UI route
 	e.GET("/swagger/*", echoSwagger.EchoWrapHandler())

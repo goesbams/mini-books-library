@@ -13,12 +13,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type Handler struct {
+type BookHandler struct {
 	service services.BookServiceInterface
 }
 
-func NewHandler(service services.BookServiceInterface) *Handler {
-	return &Handler{service: service}
+func NewBookHandler(service services.BookServiceInterface) *BookHandler {
+	return &BookHandler{service: service}
 }
 
 // GetBooks fetches all books
@@ -30,7 +30,7 @@ func NewHandler(service services.BookServiceInterface) *Handler {
 // @Success 200 {array} entities.Book
 // @Failure 500 {object} map[string]interface{}
 // @Router /books [get]
-func (h *Handler) GetBooks(c echo.Context) error {
+func (h *BookHandler) GetBooks(c echo.Context) error {
 	books, err := h.service.GetBooks()
 	if err != nil {
 		logrus.WithError(err).Error("failed to fetch books")
@@ -60,7 +60,7 @@ func (h *Handler) GetBooks(c echo.Context) error {
 // @Success 201 {object} entities.Book
 // @Failure 400 {object} map[string]interface{}
 // @Router /books [post]
-func (h *Handler) AddBook(c echo.Context) error {
+func (h *BookHandler) AddBook(c echo.Context) error {
 	var book entities.Book
 	if err := c.Bind(&book); err != nil {
 		logrus.WithError(err).Error("failed to bind book data")
@@ -106,7 +106,7 @@ func (h *Handler) AddBook(c echo.Context) error {
 // @Failure 404 {object} map[string]string "Book not found"
 // @Failure 500 {object} map[string]string "Internal server error"
 // @Router /books/{id} [get]
-func (h *Handler) GetBookById(c echo.Context) error {
+func (h *BookHandler) GetBookById(c echo.Context) error {
 	id := c.Param("id")
 
 	book, err := h.service.GetBookById(id)
@@ -149,7 +149,7 @@ func (h *Handler) GetBookById(c echo.Context) error {
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
 // @Router /books/{id} [put]
-func (h *Handler) UpdateBook(c echo.Context) error {
+func (h *BookHandler) UpdateBook(c echo.Context) error {
 	id := c.Param("id")
 
 	var book entities.Book
@@ -201,7 +201,7 @@ func (h *Handler) UpdateBook(c echo.Context) error {
 // @Failure 404 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
 // @Router /books/{id} [delete]
-func (h *Handler) DeleteBook(c echo.Context) error {
+func (h *BookHandler) DeleteBook(c echo.Context) error {
 	id := c.Param("id")
 
 	if err := h.service.DeleteBook(id); err != nil {
