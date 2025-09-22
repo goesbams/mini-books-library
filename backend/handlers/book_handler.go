@@ -129,3 +129,63 @@ func (h *Handler) GetBookById(c echo.Context) error {
 	logrus.Info(fmt.Sprintf("get book by id:%d title:%s successfully", book.ID, book.Title))
 	return c.JSON(http.StatusOK, book)
 }
+
+// UpdateBook updates the information of an existing book
+// @Summary Update a book by ID
+// @Description Partially update a book's details by its ID (only provided fields will be updated)
+// @Tags books
+// @Accept application/x-www-form-urlencoded
+// @Produce json
+// @Param id path int true "Book ID"
+// @Param title formData string false "Book Title"
+// @Param author formData string false "Book Author"
+// @Param cover_image_url formData string false "Cover Image URL"
+// @Param description formData string false "Description"
+// @Param publication_date formData string false "Publication Date (YYYY-MM-DD)"
+// @Param number_of_pages formData int false "Number of Pages"
+// @Param isbn formData string false "ISBN (13 digits)"
+// @Success 200 {object} entities.Book
+// @Failure 400 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /books/{id} [put]
+func (h *Handler) UpdateBook(c echo.Context) error {
+	id := c.Param("id")
+
+	var book entities.Book
+	if err := c.Bind(&book); err != nil {
+		logrus.WithError(err).Error("failed to bind book data")
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error":   "bad_request",
+			"message": "invalid book data",
+		})
+	}
+
+	// call service
+	if err := h.service.UpdateBook(id, &book); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return c.JSON(http.StatusNotFound, map[string]string{
+				"error":   "not_found",
+				"message": "book not found",
+			})
+		}
+
+		if verr, ok := err.(utils.ValidationError); ok {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"error":   "bad_request",
+				"message": verr.Errors,
+			})
+		}
+
+		logrus.WithError(err).Error("failed to update book")
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error":   "internal_server_error",
+			"message": "unable to update book",
+		})
+	}
+
+	logrus.Infof("updated book id:%s title:%s successfully", id, book.Title)
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "book updated successfully",
+	})
+}
