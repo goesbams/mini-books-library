@@ -8,7 +8,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type BookService interface {
+type BookServiceInterface interface {
 	GetBooks() ([]entities.Book, error)
 	AddBook(*entities.Book) error
 	GetBookById(id string) (entities.Book, error)
@@ -16,16 +16,16 @@ type BookService interface {
 	DeleteBook(id string) error
 }
 
-type BookServiceSqlx struct {
-	repo repositories.BookRepository
+type BookService struct {
+	repo repositories.BookRepositoryInterface
 	db   *sqlx.DB
 }
 
-func NewBookService(repo repositories.BookRepository, db *sqlx.DB) BookService {
-	return &BookServiceSqlx{repo: repo, db: db}
+func NewBookService(repo repositories.BookRepositoryInterface, db *sqlx.DB) BookServiceInterface {
+	return &BookService{repo: repo, db: db}
 }
 
-func (s *BookServiceSqlx) GetBooks() ([]entities.Book, error) {
+func (s *BookService) GetBooks() ([]entities.Book, error) {
 	books, err := s.repo.GetBooks(s.db)
 	if err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func (s *BookServiceSqlx) GetBooks() ([]entities.Book, error) {
 	return books, nil
 }
 
-func (s *BookServiceSqlx) AddBook(book *entities.Book) error {
+func (s *BookService) AddBook(book *entities.Book) error {
 	if err := book.Validate(); err != nil {
 		return utils.FormatValidationError(err, book)
 	}
@@ -42,11 +42,11 @@ func (s *BookServiceSqlx) AddBook(book *entities.Book) error {
 	return s.repo.AddBook(s.db, book)
 }
 
-func (s *BookServiceSqlx) GetBookById(id string) (entities.Book, error) {
+func (s *BookService) GetBookById(id string) (entities.Book, error) {
 	return s.repo.GetBookById(s.db, id)
 }
 
-func (s *BookServiceSqlx) UpdateBook(id string, book *entities.Book) error {
+func (s *BookService) UpdateBook(id string, book *entities.Book) error {
 	validate := validator.New()
 
 	var validationErrors []utils.FieldError
@@ -110,6 +110,6 @@ func (s *BookServiceSqlx) UpdateBook(id string, book *entities.Book) error {
 	return s.repo.UpdateBook(s.db, id, book)
 }
 
-func (s *BookServiceSqlx) DeleteBook(id string) error {
+func (s *BookService) DeleteBook(id string) error {
 	return s.repo.DeleteBook(s.db, id)
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type BookRepository interface {
+type BookRepositoryInterface interface {
 	GetBooks(db *sqlx.DB) ([]entities.Book, error)
 	AddBook(db *sqlx.DB, book *entities.Book) error
 	GetBookById(db *sqlx.DB, id string) (entities.Book, error)
@@ -18,13 +18,13 @@ type BookRepository interface {
 	DeleteBook(db *sqlx.DB, id string) error
 }
 
-type BookRepositorySqlx struct{}
+type BookRepository struct{}
 
-func NewBookRepository() BookRepository {
-	return &BookRepositorySqlx{}
+func NewBookRepository() BookRepositoryInterface {
+	return &BookRepository{}
 }
 
-func (r *BookRepositorySqlx) GetBooks(db *sqlx.DB) ([]entities.Book, error) {
+func (r *BookRepository) GetBooks(db *sqlx.DB) ([]entities.Book, error) {
 	var books []entities.Book
 	err := db.Select(&books, "SELECT id, title, author, cover_image_url, description, publication_date, Isbn, number_of_pages FROM books")
 	if err != nil {
@@ -38,7 +38,7 @@ func (r *BookRepositorySqlx) GetBooks(db *sqlx.DB) ([]entities.Book, error) {
 	return books, nil
 }
 
-func (r *BookRepositorySqlx) AddBook(db *sqlx.DB, book *entities.Book) error {
+func (r *BookRepository) AddBook(db *sqlx.DB, book *entities.Book) error {
 	_, err := db.NamedExec(`
     INSERT INTO books (
         title, author, cover_image_url, description, publication_date, number_of_pages, isbn
@@ -51,7 +51,7 @@ func (r *BookRepositorySqlx) AddBook(db *sqlx.DB, book *entities.Book) error {
 	return nil
 }
 
-func (r *BookRepositorySqlx) GetBookById(db *sqlx.DB, id string) (entities.Book, error) {
+func (r *BookRepository) GetBookById(db *sqlx.DB, id string) (entities.Book, error) {
 	var book entities.Book
 	err := db.Get(&book, `
 		SELECT id, title, author, cover_image_url, description, publication_date, number_of_pages, isbn
@@ -65,7 +65,7 @@ func (r *BookRepositorySqlx) GetBookById(db *sqlx.DB, id string) (entities.Book,
 	return book, nil
 }
 
-func (r *BookRepositorySqlx) UpdateBook(db *sqlx.DB, id string, book *entities.Book) error {
+func (r *BookRepository) UpdateBook(db *sqlx.DB, id string, book *entities.Book) error {
 	book.ID, _ = strconv.Atoi(id)
 
 	updates := []string{}
@@ -122,7 +122,7 @@ func (r *BookRepositorySqlx) UpdateBook(db *sqlx.DB, id string, book *entities.B
 	return nil
 }
 
-func (r *BookRepositorySqlx) DeleteBook(db *sqlx.DB, id string) error {
+func (r *BookRepository) DeleteBook(db *sqlx.DB, id string) error {
 	_, err := db.Exec("DELETE FROM books WHERE id = $1", id)
 	if err != nil {
 		return fmt.Errorf("database error: %w", err)
