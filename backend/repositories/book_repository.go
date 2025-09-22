@@ -15,6 +15,7 @@ type BookRepository interface {
 	AddBook(db *sqlx.DB, book *entities.Book) error
 	GetBookById(db *sqlx.DB, id string) (entities.Book, error)
 	UpdateBook(db *sqlx.DB, id string, book *entities.Book) error
+	DeleteBook(db *sqlx.DB, id string) error
 }
 
 type BookRepositorySqlx struct{}
@@ -118,5 +119,13 @@ func (r *BookRepositorySqlx) UpdateBook(db *sqlx.DB, id string, book *entities.B
 		return sql.ErrNoRows
 	}
 
+	return nil
+}
+
+func (r *BookRepositorySqlx) DeleteBook(db *sqlx.DB, id string) error {
+	_, err := db.Exec("DELETE FROM books WHERE id = $1", id)
+	if err != nil {
+		return fmt.Errorf("database error: %w", err)
+	}
 	return nil
 }

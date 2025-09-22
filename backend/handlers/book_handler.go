@@ -189,3 +189,27 @@ func (h *Handler) UpdateBook(c echo.Context) error {
 		"message": "book updated successfully",
 	})
 }
+
+// DeleteBook deletes a book by ID
+// @Summary Delete a book by ID
+// @Description Delete a book by its ID
+// @Tags books
+// @Accept json
+// @Produce json
+// @Success 204 {string} string "No Content"
+// @Failure 404 {object} map[string]interface{}
+// @Router /books/{id} [delete]
+func (h *Handler) DeleteBook(c echo.Context) error {
+	id := c.Param("id")
+
+	if err := h.service.DeleteBook(id); err != nil {
+		logrus.WithError(err).Error("failed to delete book")
+		return c.JSON(http.StatusNotFound, map[string]string{
+			"error":   "not found",
+			"message": "book not found",
+		})
+	}
+
+	logrus.Info(fmt.Sprintf("deleted book id: %s successfully", id))
+	return c.NoContent(http.StatusNoContent)
+}

@@ -13,6 +13,7 @@ type BookService interface {
 	AddBook(*entities.Book) error
 	GetBookById(id string) (entities.Book, error)
 	UpdateBook(id string, book *entities.Book) error
+	DeleteBook(id string) error
 }
 
 type BookServiceSqlx struct {
@@ -107,4 +108,8 @@ func (s *BookServiceSqlx) UpdateBook(id string, book *entities.Book) error {
 	}
 
 	return s.repo.UpdateBook(s.db, id, book)
+}
+
+func (s *BookServiceSqlx) DeleteBook(id string) error {
+	return s.repo.DeleteBook(s.db, id)
 }

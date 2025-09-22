@@ -113,6 +113,25 @@ paths:
       tags:
       - books
   /books/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a book by its ID
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a book by ID
+      tags:
+      - books
     get:
       consumes:
       - application/json
