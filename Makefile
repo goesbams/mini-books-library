@@ -34,3 +34,7 @@ docker-up:
 docker-down:
 	@echo "Stopping and removing all running containers and networks..."
 	docker-compose down
+
+swag-up:
+	@echo "Generating swagger document"
+	swag init -g backend/cmd/main.go
