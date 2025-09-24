@@ -32,28 +32,19 @@ services:
     networks:
       - mini-books-library-net
 
-  # migrate:
-  #   build:
-  #     context: .
-  #     dockerfile: backend/Dockerfile
-  #   container_name: mini-books-library-migrate
-  #   command: /app/backend migrate
-  #   depends_on:
-  #     - postgres
-  #   networks:
-  #     - mini-books-library-net
-
-  # swagger-ui:
-  #   image: swaggerapi/swagger-ui
-  #   container_name: swagger-ui
-  #   ports:
-  #     - "8081:8080"
-  #   environment:
-  #     - SWAGGER_JSON=http://backend:9000/swagger/doc.json  
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - mini-books-library-net
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: mini-books-library-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:9000
+    depends_on:
+      - backend
+    networks:
+      - mini-books-library-net
     
 networks:
   mini-books-library-net:
