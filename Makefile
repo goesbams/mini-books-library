@@ -9,8 +9,8 @@ help:
 	@echo "------------------------------------------------------------------------------------------------------------"
 	@echo -e "    migrate-up: \t\t Apply database migrations (e.g., add new tables/columns)"
 	@echo -e "    migrate-down: \t\t Revert database migrations (e.g., remove tables/columns)"
-	@echo -e "    docker-build <service>: \t Build the specified service (e.g., backend, postgres)"
-	@echo -e "    docker-up <service>: \t Start the specified service (e.g., backend, postgres) and its dependencies"
+	@echo -e "    docker-build service=<service_name>: \t Build the specified service (e.g., backend, postgres)"
+	@echo -e "    docker-up service=<service_name>: \t Start the specified service (e.g., backend, postgres) and its dependencies"
 	@echo -e "    docker-down: \t\t Stop and remove all running containers and networks"
 	@echo "------------------------------------------------------------------------------------------------------------"
 
