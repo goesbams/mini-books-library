@@ -4,6 +4,7 @@ import (
 	"github.com/goesbams/mini-books-library/backend/config"
 	"github.com/goesbams/mini-books-library/backend/database"
 	_ "github.com/goesbams/mini-books-library/backend/docs"
+	"github.com/goesbams/mini-books-library/backend/middleware"
 	"github.com/goesbams/mini-books-library/backend/utils"
 	echoSwagger "github.com/swaggo/echo-swagger"
 
@@ -40,8 +41,13 @@ func main() {
 	bookService := services.NewBookService(bookRepo, conn)
 	urlService := services.NewUrlService()
 
-	// setup book handlers
+	// create echo instance
 	e := echo.New()
+
+	// CORS middleware
+	e.Use(middleware.CORS())
+
+	// define handlers
 	bookHandler := handlers.NewBookHandler(bookService)
 	urlHandler := handlers.NewUrlHandler(urlService)
 
