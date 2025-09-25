@@ -47,4 +47,4 @@ swag-up:
 # Seed database
 seed:
 	@echo "Seeding initial book data into the database..."
-	cd backend && go run seeds/main.go
+	cd backend && go run seed/main.go
