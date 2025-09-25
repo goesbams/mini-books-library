@@ -7,6 +7,7 @@ help:
 	@echo "------------------------------------------------------------------------------------------------------------"
 	@echo "Commands:"
 	@echo "------------------------------------------------------------------------------------------------------------"
+	@echo "  help                          Show available commands on Makefile"
 	@echo "  migrate-up                    Apply database migrations (e.g., add new tables/columns)"
 	@echo "  migrate-down                  Revert database migrations (e.g., remove tables/columns)"
 	@echo "  docker-build service=<name>   Build the specified service (e.g., backend, postgres)"

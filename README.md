@@ -14,13 +14,7 @@
 - [Installation](#installation)
 - [Make CLI](#make-cli)
 - [Dockerization](#Dockerization)
-- [Environment variables (`.env` examples)](#environment-variables-env-examples)
-- [Quickstart (local, dev)](#quickstart-local-dev)
-  - [Run DB (Docker Compose)](#run-db-docker-compose)
-  - [Run backend (Golang)](#run-backend-golang)
-  - [Run frontend (Next.js)](#run-frontend-nextjs)
-  - [Run everything with Docker Compose](#run-everything-with-docker-compose)
-- [Make targets (recommended / common)](#make-targets-recommended--common)
+- [Look! It Runs!!](#look--it-runs--)
 - [API — endpoints & examples](#api---endpoints--examples)
   - [Books endpoints](#books-endpoints)
   - [URL cleanup & redirection endpoint](#url-cleanup--redirection-endpoint)
@@ -84,15 +78,21 @@ NEXT_PUBLIC_API_URL=http://localhost:9000
 
 | Command                               | Description                                                         |
 |---------------------------------------|---------------------------------------------------------------------|
+| `make help`                           | Show available commands on Makefile.            |
 | `make migrate-up`                     | Apply database migrations (e.g., add new tables/columns).            |
 | `make migrate-down`                   | Revert database migrations (e.g., remove tables/columns).            |
 | `make docker-build service=<name>`    | Build the specified service (e.g., `backend`, `postgres`).          |
 | `make docker-up service=<name>`       | Start the specified service (e.g., `frontend`, `backend`, `postgres`) |
 | `make docker-down`                    | Stop and remove all running containers and networks.                 |
+| `make swag-up`                    | Generate Swagger API documentation.                 |
+| `make seed`                    | Seed books data into the database.                 |
+
+![Makefile Commands](docs/makefile/makefile-help.png)
 
 ---
 
 ## Dockerization
+> Step by step installation using docker
 1. Run Database Postgres until Up
 ```
 make docker-up service=postgres
@@ -102,7 +102,16 @@ or
 docker-compose up postgres
 ```
 
-2. Run Backend 
+2. Build Backend 
+```
+make docker-build service=backend
+
+or
+
+docker-compose build --no-cache backend
+
+```
+3. Run Backend 
 ```
 make docker-up service=backend
 
@@ -111,7 +120,17 @@ or
 docker-compose up backend
 
 ```
-3. Run Frontend (Next.js/Typescript)
+4. Seed Database 
+```
+make seed
+
+or
+
+cd backend
+go run seeds/main.go
+
+```
+5. Run Frontend (Next.js/Typescript)
 ```
 make docker-up service=frontend
 
@@ -119,4 +138,21 @@ or
 
 docker-compose up frontend
 ```
+![Docker Image](docs/docker/running-docker-image.png)
+
+---
+
+## Look! It Runs!!
+
+1. Open http://localhost:3000 in your browser
+> After all services on docker image running and also seeding done. It's time to check FE from browser.
+
+![Frontend Running](docs/frontend/book-dashboard.png)
+
+2. Open http://localhost:9000/swagger/index.html in your browser
+> We can play with data using swagger
+
+![Swagger API](docs/swagger/swagger-1.png)
+![Swagger Entities](docs/swagger/swagger-2.png)
+---
 
