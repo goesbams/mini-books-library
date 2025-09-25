@@ -1,40 +1,49 @@
-.PHONY: help migrate-up migrate-down docker-build docker-up docker-down start-up
+.PHONY: help migrate-up migrate-down docker-build docker-up docker-down swag-up seed
 
-# default service value
+# Default service value for docker commands (override with `make docker-up service=frontend`)
 service ?= backend
 
 help:
 	@echo "------------------------------------------------------------------------------------------------------------"
 	@echo "Commands:"
 	@echo "------------------------------------------------------------------------------------------------------------"
-	@echo -e "    migrate-up: \t\t Apply database migrations (e.g., add new tables/columns)"
-	@echo -e "    migrate-down: \t\t Revert database migrations (e.g., remove tables/columns)"
-	@echo -e "    docker-build service=<service_name>: \t Build the specified service (e.g., backend, postgres)"
-	@echo -e "    docker-up service=<service_name>: \t Start the specified service (e.g., backend, postgres) and its dependencies"
-	@echo -e "    docker-down: \t\t Stop and remove all running containers and networks"
+	@echo "  migrate-up                    Apply database migrations (e.g., add new tables/columns)"
+	@echo "  migrate-down                  Revert database migrations (e.g., remove tables/columns)"
+	@echo "  docker-build service=<name>   Build the specified service (e.g., backend, postgres)"
+	@echo "  docker-up service=<name>      Start the specified service (e.g., backend, postgres) and its dependencies"
+	@echo "  docker-down                   Stop and remove all running containers and networks"
+	@echo "  swag-up                       Generate Swagger API documentation"
+	@echo "  seed                          Seed books data into the database"
 	@echo "------------------------------------------------------------------------------------------------------------"
 
-# migrate up from local to docker
+# Migration commands
 migrate-up:
 	@echo "Running migrations to update the database..."
-	migrate -path ./backend/migrations -database postgres://user:password@localhost:5432/books_db?sslmode=disable up
+	migrate -path ./backend/migrations -database "postgres://user:password@localhost:5432/books_db?sslmode=disable" up
 
 migrate-down:
 	@echo "Reverting migrations to rollback the database..."
-	migrate -path ./backend/migrations -database postgres://user:password@localhost:5432/books_db?sslmode=disable down
+	migrate -path ./backend/migrations -database "postgres://user:password@localhost:5432/books_db?sslmode=disable" down
 
+# Docker commands
 docker-build:
 	@echo "Building the $(service) service image..."
 	docker-compose build --no-cache $(service)
 
 docker-up:
-	@echo "Starting up the $(service) service..."
+	@echo "Starting the $(service) service..."
 	docker-compose up $(service)
 
 docker-down:
 	@echo "Stopping and removing all running containers and networks..."
 	docker-compose down
 
+# Swagger docs
 swag-up:
-	@echo "Generating swagger document"
+	@echo "Generating Swagger documentation..."
 	swag init -g backend/cmd/main.go
+
+# Seed database
+seed:
+	@echo "Seeding initial book data into the database..."
+	cd backend && go run seed/main.go
