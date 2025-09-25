@@ -18,7 +18,6 @@
 - [API — endpoints & examples](#api---endpoints--examples)
   - [Books endpoints](#books-endpoints)
   - [URL cleanup & redirection endpoint](#url-cleanup--redirection-endpoint)
-- [Postman collection (import-ready snippet)](#postman-collection-import-ready-snippet)
 - [cURL examples](#curl-examples)
 - [Data schema & ERD (books)](#data-schema--erd-books)
 - [Swagger / API specification](#swagger--api-specification)
@@ -154,5 +153,11 @@ docker-compose up frontend
 
 ![Swagger API](docs/swagger/swagger-1.png)
 ![Swagger Entities](docs/swagger/swagger-2.png)
+
+3. Open Redirect URL
+> We'll use postman or cURL for using this feature
+![URl Process - Canonical](docs/urls-process/canonical-operation.png)
+![URL Process - Redirection](docs/urls-process/redirection-operation.png)
+![URl Process - All](docs/urls-process/all-operations.png)
 ---
 
