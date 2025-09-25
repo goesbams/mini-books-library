@@ -154,10 +154,197 @@ docker-compose up frontend
 ![Swagger API](docs/swagger/swagger-1.png)
 ![Swagger Entities](docs/swagger/swagger-2.png)
 
-3. Open Redirect URL
+3. Open Clean Up/Redirect URL
 > We'll use postman or cURL for using this feature
 ![URl Process - Canonical](docs/urls-process/canonical-operation.png)
 ![URL Process - Redirection](docs/urls-process/redirection-operation.png)
 ![URl Process - All](docs/urls-process/all-operations.png)
 ---
+
+## API — Endpoints & Examples
+
+### GET `/books` — Get all books
+Retrieve a list of all books in the library.
+
+| Method | Route   | Headers                | Body | Response codes |
+|--------|---------|------------------------|------|----------------|
+| GET    | `/books` | `Accept: application/json` | None | `200 OK` (list of books)<br>`500 Internal Server Error` |
+
+**Response Example (200 OK)**  
+```json
+[
+  {
+    "id": 1,
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "cover_image_url": "string",
+    "description": "string",
+    "publication_date": "2008-08-01",
+    "number_of_pages": 464,
+    "isbn": "9780136083238"
+  }
+]
+```
+
+
+### POST `/books` — Add a new book
+Add a new book to the library.
+
+| Method | Route   | Headers                                | Body (formData)                                                                                                  | Response codes |
+|--------|---------|----------------------------------------|------------------------------------------------------------------------------------------------------------------|----------------|
+| POST   | `/books` | `Content-Type: application/x-www-form-urlencoded`<br>`Accept: application/json` | `title*` (string)<br>`author*` (string)<br>`cover_image_url` (string, URL)<br>`description` (string)<br>`publication_date*` (YYYY-MM-DD)<br>`number_of_pages*` (int)<br>`isbn*` (string, 13 digits) | `201 Created` (book object)<br>`400 Bad Request` |
+
+**Response Example (201 Created)**  
+```json
+{
+  "id": 1,
+  "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+  "author": "Robert C. Martin",
+  "cover_image_url": "https://www.oreilly.com/covers/urn:orm:book:9780136083238/400w/",
+  "description": "A handbook of agile software craftsmanship focusing on best practices for writing clean, maintainable code.",
+  "publication_date": "2008-08-01",
+  "number_of_pages": 464,
+  "isbn": "9780136083238"
+}
+```
+
+
+### GET `/books/{id}` — Get book by ID
+Get detailed information about a book by its ID.
+
+| Method | Route        | Headers                | Path Params         | Body | Response codes |
+|--------|--------------|------------------------|---------------------|------|----------------|
+| GET    | `/books/{id}` | `Accept: application/json` | `id*` (int, book ID) | None | `200 OK` (book object)<br>`404 Not Found`<br>`500 Internal Server Error` |
+
+**Response Example (200 OK)**  
+```json
+{
+  "id": 1,
+  "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+  "author": "Robert C. Martin",
+  "cover_image_url": "https://www.oreilly.com/covers/urn:orm:book:9780136083238/400w/",
+  "description": "A handbook of agile software craftsmanship focusing on best practices for writing clean, maintainable code.",
+  "publication_date": "2008-08-01",
+  "number_of_pages": 464,
+  "isbn": "9780136083238"
+}
+```
+
+**Response Example (404 Not Found)**
+```json
+{
+  "error": "Book not found"
+}
+```
+
+**Response Example (500 Internal Server Error)**
+```json
+{
+  "error": "Unexpected server error"
+}
+```
+
+### PUT `/books/{id}` — Update a book by ID
+Partially update a book's details by its ID (only provided fields will be updated).
+
+| Method | Route        | Headers                                | Path Params         | Body (formData)                                                                                              | Response codes |
+|--------|--------------|----------------------------------------|---------------------|--------------------------------------------------------------------------------------------------------------|----------------|
+| PUT    | `/books/{id}` | `Content-Type: application/x-www-form-urlencoded`<br>`Accept: application/json` | `id*` (int, book ID) | Any subset of:<br>`title` (string)<br>`author` (string)<br>`cover_image_url` (string, URL)<br>`description` (string)<br>`publication_date` (YYYY-MM-DD)<br>`number_of_pages` (int)<br>`isbn` (string, 13 digits) | `200 OK` (book object)<br>`400 Bad Request`<br>`404 Not Found`<br>`500 Internal Server Error` |
+
+**Response Example (200 OK)**  
+```json
+{
+  "id": 1,
+  "title": "Clean Code (Updated Edition)",
+  "author": "Robert C. Martin",
+  "cover_image_url": "https://www.oreilly.com/covers/urn:orm:book:9780136083238/400w/",
+  "description": "Updated description for Clean Code.",
+  "publication_date": "2008-08-01",
+  "number_of_pages": 480,
+  "isbn": "9780136083238"
+}
+```
+
+Response Example (400 Bad Request)
+```json
+{
+  "error": "Invalid request payload"
+}
+```
+Response Example (404 Not Found)
+```json
+{
+  "error": "Book not found"
+}
+```
+**Response Example (500 Internal Server Error)**
+```json
+{
+  "error": "Unexpected server error"
+}
+```
+
+### DELETE `/books/{id}` — Delete a book by ID
+Delete a book from the library by its ID.
+
+| Method | Route          | Headers                | Path Params         | Body | Response codes |
+|--------|----------------|------------------------|---------------------|------|----------------|
+| DELETE | `/books/{id}`  | `Accept: application/json` | `id*` (int, book ID) | None | `204 No Content`<br>`404 Not Found`<br>`500 Internal Server Error` |
+
+**Response Example (204 No Content)** 
+```json
+""
+```
+
+**Response Example (404 Not Found)**
+```json
+{
+  "error": "Book not found"
+}
+```
+
+**Response Example (500 Internal Server Error)**
+```json
+{
+  "error": "Unexpected server error"
+}
+```
+
+### POST `/urls/process` — Process URL cleanup/redirection
+Process a URL with one of the following operations:
+- `redirection`: force lowercase + enforce domain (`www.byfood.com`)
+- `canonical`: remove query params + trailing slash
+- `all`: apply both rules
+
+| Method | Route           | Headers                                | Body (JSON)                                                                                  | Response codes |
+|--------|-----------------|----------------------------------------|----------------------------------------------------------------------------------------------|----------------|
+| POST   | `/urls/process` | `Content-Type: application/json`<br>`Accept: application/json` | `{ "url": "string", "operation": "redirection \| canonical \| all" }` | `200 OK` (processed URL)<br>`400 Bad Request`<br>`500 Internal Server Error` |
+
+**Response Example (200 OK)**  
+```json
+{
+  "processed_url": "https://www.byfood.com/food-experiences"
+}
+```
+
+**Response Example (400 Bad Request)**
+```json
+{
+  "error": "Invalid URL or operation"
+}
+```
+
+**Response Example (500 Internal Server Error)**
+```json
+{
+  "error": "Unexpected server error"
+}
+```
+
+
+
+
+
+
+
 
