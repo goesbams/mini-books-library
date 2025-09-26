@@ -48,3 +48,8 @@ swag-up:
 seed:
 	@echo "Seeding initial book data into the database..."
 	cd backend && go run seeds/main.go
+
+web-start:
+	@echo " Building frontend image and starting frontend container"
+	docker build -t mini-books-frontend ./frontend
+	docker run --rm -p 3000:3000 --name mini-frontend mini-books-frontend
