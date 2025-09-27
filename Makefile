@@ -35,9 +35,14 @@ docker-up:
 	@echo "Starting the $(service) service..."
 	docker-compose up $(service)
 
-docker-down:
+docker-down-all:
 	@echo "Stopping and removing all running containers and networks..."
 	docker-compose down
+
+docker-down:
+	@echo "Stopping and removing service"
+	docker-compose stop $(service)
+	docker-compose rm $(service)
 
 # Swagger docs
 swag-up:
@@ -53,3 +58,8 @@ web-start:
 	@echo " Building frontend image and starting frontend container"
 	docker build -t mini-books-frontend ./frontend
 	docker run --rm -p 3000:3000 --name mini-frontend mini-books-frontend
+
+web-stop:
+	@echo "Stopping FE instance..."
+	docker stop mini-frontend || true
+	docker rm mini-frontend || true
