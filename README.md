@@ -140,7 +140,7 @@ docker-compose up frontend
 6. Uh!!Oh!!
 > When I try run `docker-compose up frontend` on Windows OS (Thanks Microsoft!!), it goes failed. So I add workaround command to run it meanwhile I fix Dockerfile.
 
-```json
+```
   docker build -t mini-books-frontend ./frontend
   docker run --rm -p 3000:3000 --name mini-frontend mini-books-frontend
 ```
